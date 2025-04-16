@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter/foundation.dart';
 
 void main() {
   runApp(const MainApp());
@@ -26,18 +26,20 @@ class Navigation extends StatefulWidget {
   State<Navigation> createState() => _NavigationState();
 }
 
-class _NavigationState extends State<Navigation> {
+class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
   
   late PageController _controller; // Controller for different pages
-  late int _pageIndex; // Variable to see current page
+  late int _pageIndex; // Variabl customizablee to see current page
 
   @override
   void initState() {
     super.initState();
-    _controller = PageController();
     
     // TODO implement a laod in data spot here
     _pageIndex = 0;
+    _controller = PageController(
+      initialPage: _pageIndex,
+    );
   }
 
   @override
@@ -45,6 +47,14 @@ class _NavigationState extends State<Navigation> {
     super.dispose();
     _controller.dispose();
   }
+
+  bool get _desktopOrWeb =>
+      kIsWeb ||
+      switch (defaultTargetPlatform) {
+        TargetPlatform.macOS || TargetPlatform.linux || TargetPlatform.windows => true,
+        TargetPlatform.android || TargetPlatform.iOS || TargetPlatform.fuchsia => false,
+      }; 
+
 
   @override
   Widget build(BuildContext context){
@@ -59,61 +69,56 @@ class _NavigationState extends State<Navigation> {
             groupAlignment: -1.0,
             labelType: NavigationRailLabelType.all,
             
-            onDestinationSelected: (int index){
-              setState(() {
-                _pageIndex = index;
-              });
-            },
+            onDestinationSelected: _changePage,
 
-            destinations: <NavigationRailDestination> [
+            destinations: const <NavigationRailDestination> [
               
               // Home selection
               NavigationRailDestination(
-                icon: Icon(Icons.home), 
+                icon: Icon(Icons.home_outlined), 
+                selectedIcon: Icon(Icons.home),
                 label: Text(
                   'Home',
                   style: TextStyle(fontFamily: 'AnonymousPro'),
                 ),
-                selectedIcon: Icon(Icons.home_filled)
               ),
               
               // Colours selection
               NavigationRailDestination(
                 icon: Icon(Icons.brush_outlined), 
+                selectedIcon: Icon(Icons.brush),
                 label: Text(
                   'Colours',
                   style: TextStyle(fontFamily: 'AnonymousPro'),
                 ),
-                selectedIcon: Icon(Icons.brush)
               ),
             ], // Destinations
           ),
 
           VerticalDivider(),
 
-          PageView(
-            controller: _controller,
-            allowImplicitScrolling: false,
-            children: <Widget> [
-              Center(
-                child: Text(
-                  'HOME'
-                ),
-              ),
-    
-              Center(
-                child: Text(
-                  'COLOURS'
-                ),
-              ),
-            ],
+          Expanded(
+            child: _selectedPage(_pageIndex),
           ),
         ], // Children
       ),
     );
   }
+
+  Widget _selectedPage(index){
+    switch (index) {
+      case 0:
+      return Container(child: Text("Main"));
+      case 1:
+      return Container(child: Text("Colours"));
+      default:
+      return Container(child: Text("This shouldn't happen"));
+    }
+  }
+
+  _changePage(index){
+    setState(() {
+      _pageIndex = index;
+    });
+  }
 }
-
-
-
-
