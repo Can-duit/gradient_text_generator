@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'package:gradient_text_generator/colours_page.dart';
+import 'package:gradient_text_generator/home_page.dart';
+import 'package:gradient_text_generator/widgets.dart';
 
 void main() {
   runApp(const MainApp());
@@ -14,22 +16,21 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(useMaterial3: true),
       home: const Navigation()
     );
-  }
-}
+  } // Widget build
+} // MainApp
 
 
-
+// Widget for navigating the different pages
 class Navigation extends StatefulWidget {
   const Navigation({super.key});
 
   @override
   State<Navigation> createState() => _NavigationState();
-}
+} // Navigation
 
 class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
   
-  late PageController _controller; // Controller for different pages
-  late int _pageIndex; // Variabl customizablee to see current page
+  late int _pageIndex; // Variable to determine selected page
 
   @override
   void initState() {
@@ -37,30 +38,52 @@ class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
     
     // TODO implement a laod in data spot here
     _pageIndex = 0;
-    _controller = PageController(
-      initialPage: _pageIndex,
-    );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
+  // Dispalying a page based on which one was selected
+  Widget _selectedPage(index){
+    switch (index) {
+      case 0:
+      return HomePage();
+      case 1:
+      return ColoursPage();
+      default:
+      return Center(child: Text("HEY! YOU BROKE MY CODE!"));
+    }
   }
 
-  bool get _desktopOrWeb =>
-      kIsWeb ||
-      switch (defaultTargetPlatform) {
-        TargetPlatform.macOS || TargetPlatform.linux || TargetPlatform.windows => true,
-        TargetPlatform.android || TargetPlatform.iOS || TargetPlatform.fuchsia => false,
-      }; 
-
+  // Function for when a different page is selected
+  _changePage(index){
+    setState(() {
+      _pageIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context){
-    final ThemeData theme = Theme.of(context);
+    // final ThemeData theme = Theme.of(context);
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Center(
+          child: ShaderMask(
+            shaderCallback: (Rect bounds) {
+              return LinearGradient(
+                // TODO load in from database colours for title
+
+                colors: <Color>[Colors.yellow, Colors.orange, Colors.purple, Colors.blue],
+              ).createShader(bounds);
+            },
+            child: const StyledText(
+              'Gradient Text Generator', 
+              bold: true,
+              fontSize: 30,
+              styleColour: Colors.white,
+            ),
+          )
+        ),
+      ),
       body: Row(
         children: <Widget> [
           NavigationRail(
@@ -77,22 +100,16 @@ class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
               NavigationRailDestination(
                 icon: Icon(Icons.home_outlined), 
                 selectedIcon: Icon(Icons.home),
-                label: Text(
-                  'Home',
-                  style: TextStyle(fontFamily: 'AnonymousPro'),
-                ),
+                label: StyledText('Home',),
               ),
               
               // Colours selection
               NavigationRailDestination(
                 icon: Icon(Icons.brush_outlined), 
                 selectedIcon: Icon(Icons.brush),
-                label: Text(
-                  'Colours',
-                  style: TextStyle(fontFamily: 'AnonymousPro'),
-                ),
+                label: StyledText('Colours'),
               ),
-            ], // Destinations
+            ],
           ),
 
           VerticalDivider(),
@@ -100,25 +117,8 @@ class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
           Expanded(
             child: _selectedPage(_pageIndex),
           ),
-        ], // Children
+        ],
       ),
     );
-  }
-
-  Widget _selectedPage(index){
-    switch (index) {
-      case 0:
-      return Container(child: Text("Main"));
-      case 1:
-      return Container(child: Text("Colours"));
-      default:
-      return Container(child: Text("This shouldn't happen"));
-    }
-  }
-
-  _changePage(index){
-    setState(() {
-      _pageIndex = index;
-    });
-  }
-}
+  } // Widget build
+} // _NavigationState
