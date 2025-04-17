@@ -9,6 +9,21 @@ class TextInputWidget extends StatefulWidget {
 }
 
 class _TextInputWidgetState extends State<TextInputWidget> {
+
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    _controller = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -39,14 +54,21 @@ class _TextInputWidgetState extends State<TextInputWidget> {
               flex: 3,
               child: Container(
                 margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10)
                 ),
                 child: TextField(
-
-                  style: TextStyle(),
+                  controller: _controller,
+                  onSubmitted: (String text){
+                    // TODO add in a submit function
+                  },
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    hintText: 'Type Here',
+                    border: InputBorder.none,
+                  ),
                 ),
               )
             )
