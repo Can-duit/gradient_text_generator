@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gradient_text_generator/colours_page.dart';
-import 'package:gradient_text_generator/home_page.dart';
+import 'package:gradient_text_generator/colours/colours_page.dart';
+import 'package:gradient_text_generator/home/home_page.dart';
 import 'package:gradient_text_generator/widgets.dart';
 
 void main() {
@@ -13,7 +13,16 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
+      theme: ThemeData(
+
+        // Light mode TODO dark mode
+        colorScheme: ColorScheme.fromSeed(
+          brightness: Brightness.light,
+          seedColor: Colors.purple,
+          
+        ),
+        useMaterial3: true
+      ),
       home: const Navigation()
     );
   } // Widget build

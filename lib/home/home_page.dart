@@ -1,0 +1,34 @@
+import 'package:flutter/material.dart';
+import 'package:gradient_text_generator/home/text_input.dart';
+import 'package:gradient_text_generator/widgets.dart';
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          flex: 5,
+          child: TextInputWidget()
+        ),
+        Expanded(
+          flex: 2,
+          child: StyledText(
+            'GENERATE BUTTON',
+            fontSize: 40,
+          ),
+        ),
+        Expanded(
+          flex: 5,
+          child: StyledText(
+            'TEXT DISPLAY',
+            fontSize: 40,
+          ),
+        ),
+      ],
+    );
+  }
+}
