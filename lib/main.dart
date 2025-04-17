@@ -1,9 +1,19 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_text_generator/colours/colours_page.dart';
 import 'package:gradient_text_generator/home/home_page.dart';
 import 'package:gradient_text_generator/widgets.dart';
+import 'package:window_size/window_size.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    setWindowTitle('Gradient Text Generator');
+    setWindowMaxSize(Size.infinite);
+    setWindowMinSize(Size(500, 600));
+  }
+
   runApp(const MainApp());
 }
 
