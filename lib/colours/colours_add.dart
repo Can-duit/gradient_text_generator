@@ -33,7 +33,10 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
               fontSize: 35,  
             ),
             IconButton(
-              onPressed: (){}, 
+              onPressed: (){
+
+                // TODO add character with pop-up
+              }, 
               icon: Icon(
                 Icons.add_circle,
                 color: theme.colorScheme.secondary,
@@ -43,24 +46,6 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class DataInputWidget extends StatefulWidget {
-  const DataInputWidget({super.key});
-
-  @override
-  State<DataInputWidget> createState() => _DataInputWidgetState();
-}
-
-class _DataInputWidgetState extends State<DataInputWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        StyledText(''),
-      ],
     );
   }
 }
