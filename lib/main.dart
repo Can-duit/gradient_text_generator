@@ -83,7 +83,6 @@ class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context){
-    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
