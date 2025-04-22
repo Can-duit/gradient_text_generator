@@ -11,7 +11,7 @@ void main() {
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     setWindowTitle('Gradient Text Generator');
     setWindowMaxSize(Size.infinite);
-    setWindowMinSize(Size(500, 600));
+    setWindowMinSize(Size(500, 500));
   }
 
   runApp(const MainApp());
@@ -29,6 +29,9 @@ class MainApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           brightness: Brightness.light,
           seedColor: Colors.purple,
+          primary: Colors.purple[200],
+          secondary: Colors.white,
+          tertiary: Colors.purple[400]
           
         ),
         useMaterial3: true
@@ -80,7 +83,7 @@ class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context){
-    // final ThemeData theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -94,7 +97,7 @@ class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
                 colors: <Color>[Colors.yellow, Colors.orange, Colors.purple, Colors.blue],
               ).createShader(bounds);
             },
-            child: const StyledText(
+            child: StyledText(
               'Gradient Text Generator', 
               bold: true,
               fontSize: 30,

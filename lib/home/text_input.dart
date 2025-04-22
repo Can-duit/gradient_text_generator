@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gradient_text_generator/widgets.dart';
 
 class TextInputWidget extends StatefulWidget {
@@ -26,13 +27,15 @@ class _TextInputWidgetState extends State<TextInputWidget> {
 
   @override
   Widget build(BuildContext context) {
+    String inputText = '';
+    final ThemeData theme = Theme.of(context);
 
     return SizedBox.expand(
       child: Container(
         margin: EdgeInsets.all(20),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.purple[200],
+          color: theme.colorScheme.primary,
           borderRadius: BorderRadius.circular(20)
           
         ),
@@ -44,7 +47,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                 margin: const EdgeInsets.only(bottom: 20),
                 child: StyledText(
                   'Input Text Here:',
-                  styleColour: Colors.white,
+                  styleColour: theme.colorScheme.secondary,
                   bold: true,
                   fontSize: 35,
                 ),
@@ -56,16 +59,26 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                 margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colorScheme.secondary,
                   borderRadius: BorderRadius.circular(10)
                 ),
                 child: TextField(
-                  controller: _controller,
-                  onSubmitted: (String text){
-                    // TODO add in a submit function
-                  },
                   maxLines: 5,
+                  controller: _controller,
+                  onChanged: (String text){
+                    setState(() {
+                      inputText = text;
+                    });
+                  },
                   decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.check_circle),
+                      onPressed: (){
+                        
+                        // TODO submit to the database
+                      },
+                    ),
+                    suffixIconColor: theme.primaryColor,
                     hintText: 'Type Here',
                     border: InputBorder.none,
                   ),

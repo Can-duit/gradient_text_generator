@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gradient_text_generator/home/text_display.dart';
 import 'package:gradient_text_generator/home/text_input.dart';
 import 'package:gradient_text_generator/widgets.dart';
 
@@ -14,10 +15,7 @@ class HomePage extends StatelessWidget {
           child: TextInputWidget()
         ),
         Expanded(
-          child: StyledText(
-            'TEXT DISPLAY',
-            fontSize: 40,
-          ),
+          child: TextOutputWidget()
         ),
       ],
     );
