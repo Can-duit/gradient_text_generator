@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class StyledText extends StatelessWidget {
   final String text;
@@ -71,3 +74,92 @@ class StyledText extends StatelessWidget {
   }
 }
 
+class LetterInputDialog extends StatefulWidget {
+  const LetterInputDialog({super.key});
+
+  @override
+  State<LetterInputDialog> createState() => _LetterInputDialogState();
+}
+
+class _LetterInputDialogState extends State<LetterInputDialog> {
+  late Color pickerColour;
+  String character = '';
+  late TextEditingController _colourController;
+  late TextEditingController _characterController;
+
+  @override
+  void initState() {
+    pickerColour = Color(0x00000000);
+    _colourController = TextEditingController();
+    _characterController = TextEditingController();
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 300,
+      child: AlertDialog(
+        title: Row(
+          children: [
+            StyledText('character:', bold: true,),
+            TextField(
+              controller: _characterController,
+              
+
+            )
+          ],
+        ),
+        content: Column(
+          children: [
+            ColorPicker(
+              pickerColor: pickerColour, 
+              onColorChanged: (Color colour){
+                setState(() {
+                  pickerColour = colour;
+                });
+              },
+              pickerAreaHeightPercent: 0.7,
+              enableAlpha: false,
+              displayThumbColor: true,
+              paletteType: PaletteType.hsvWithHue,
+              labelTypes: const [],
+              pickerAreaBorderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(2),
+                topRight: Radius.circular(2),
+              ),
+              hexInputController: _colourController,
+              portraitOnly: true,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+              child: CupertinoTextField(
+                controller: _colourController,
+                prefix: const Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Icon(Icons.tag),
+                ),
+                autofocus: true,
+                maxLength: 9,
+                inputFormatters: [
+                  UpperCaseTextFormatter(),
+                  FilteringTextInputFormatter.allow(RegExp(kValidHexPattern)),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: (){
+              // TODO submit to the database
+              Navigator.of(context).pop;
+            }, 
+            child: StyledText('confirm')
+          )
+        ],
+      ),
+    );
+  }
+}

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_text_generator/home/text_display.dart';
 import 'package:gradient_text_generator/home/text_input.dart';
-import 'package:gradient_text_generator/widgets.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

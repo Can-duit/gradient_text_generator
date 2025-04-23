@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gradient_text_generator/widgets.dart';
 
 class ColoursGridview extends StatefulWidget {
   const ColoursGridview({super.key});

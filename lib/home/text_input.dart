@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gradient_text_generator/widgets.dart';
 
 class TextInputWidget extends StatefulWidget {
@@ -70,9 +69,13 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                       inputText = text;
                     });
                   },
+                  style: TextStyle(
+                    fontFamily: 'AnonymousPro',
+                  ),
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
                       icon: Icon(Icons.check_circle),
+                      iconSize: 40,
                       onPressed: (){
                         
                         // TODO submit to the database

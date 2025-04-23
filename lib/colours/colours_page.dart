@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_text_generator/colours/colours_add.dart';
 import 'package:gradient_text_generator/colours/colours_gridview.dart';
-import 'package:gradient_text_generator/widgets.dart';
 
 class ColoursPage extends StatelessWidget {
   const ColoursPage({super.key});
@@ -11,12 +10,10 @@ class ColoursPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(
-          flex: 1,
-          child: AddColoursWidget(),
+        AddColoursWidget(
+          searchFunction: (value){},
         ),
         Expanded(
-          flex: 3,
           child: ColoursGridview(),
         ),
       ],
