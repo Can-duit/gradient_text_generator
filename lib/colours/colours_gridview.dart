@@ -10,6 +10,12 @@ class ColoursGridview extends StatefulWidget {
 class _ColoursGridviewState extends State<ColoursGridview> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    ThemeData theme = Theme.of(context);
+
+    return SizedBox(
+      child: Container(
+
+      ),
+    );
   }
 }

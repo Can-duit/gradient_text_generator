@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:gradient_text_generator/databasing/provider.dart';
+import 'package:provider/provider.dart';
 
 class StyledText extends StatelessWidget {
   final String text;
@@ -95,30 +97,68 @@ class _LetterInputDialogState extends State<LetterInputDialog> {
 
     super.initState();
   }
+  @override
+  void dispose() {
+    _colourController.dispose;
+    _characterController.dispose;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 300,
       child: AlertDialog(
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             StyledText('character:', bold: true,),
-            TextField(
-              controller: _characterController,
-              
+            SizedBox(
+              width: 50,
+              child: TextField(
+                onChanged: (value){
+                  setState(() {
+                    character = value;
+                  });
+                  _characterController.selection = TextSelection(
+                      baseOffset: 0,
+                      extentOffset: _characterController.value.text.length
+                  );
+                },
+                onTap: (){
+                  _characterController.selection = TextSelection(
+                      baseOffset: 0,
+                      extentOffset: _characterController.value.text.length
+                  );
+                },
+                maxLength: 1,
+                textAlign: TextAlign.center,
+                controller: _characterController,
 
-            )
+                style: TextStyle(
+                    fontFamily: 'AnonymousPro',
+                    fontSize: 30,
+                ),
+
+                decoration: InputDecoration(
+                    focusedBorder: UnderlineInputBorder(),
+                    enabledBorder: UnderlineInputBorder(),
+                    counterText: ''
+                ),
+              ),
+            ),
           ],
         ),
         content: Column(
           children: [
             ColorPicker(
-              pickerColor: pickerColour, 
+              pickerColor: pickerColour,
               onColorChanged: (Color colour){
                 setState(() {
                   pickerColour = colour;
                 });
+                print(colour.r);
+                print(colour.g);
+                print(colour.b);
               },
               pickerAreaHeightPercent: 0.7,
               enableAlpha: false,
@@ -152,10 +192,11 @@ class _LetterInputDialogState extends State<LetterInputDialog> {
         ),
         actions: [
           TextButton(
-            onPressed: (){
-              // TODO submit to the database
-              Navigator.of(context).pop;
-            }, 
+            onPressed: character == ''? null: (){
+              Provider.of<ProviderService>(context, listen: false).insertData(
+                  character, pickerColour.r, pickerColour.g,pickerColour.b);
+              Navigator.of(context).pop();
+            },
             child: StyledText('confirm')
           )
         ],

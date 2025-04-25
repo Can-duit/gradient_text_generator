@@ -2,8 +2,13 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_text_generator/colours/colours_page.dart';
+import 'package:gradient_text_generator/databasing/database.dart';
+import 'package:gradient_text_generator/databasing/provider.dart';
 import 'package:gradient_text_generator/home/home_page.dart';
 import 'package:gradient_text_generator/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:window_size/window_size.dart';
 
 void main() {
@@ -11,10 +16,17 @@ void main() {
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     setWindowTitle('Gradient Text Generator');
     setWindowMaxSize(Size.infinite);
-    setWindowMinSize(Size(500, 500));
+    setWindowMinSize(Size(800, 800));
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
   }
 
-  runApp(const MainApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => ProviderService())
+    ],
+    child: const MainApp()
+  ));
 }
 
 class MainApp extends StatelessWidget {
@@ -58,11 +70,23 @@ class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
   void initState() {
     super.initState();
     
-    // TODO implement a laod in data spot here
+    // TODO implement a load-in-page here
     _pageIndex = 0;
+
+    _initializeData();
   }
 
-  // Dispalying a page based on which one was selected
+  Future<void> _initializeData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool hasRun = prefs.getBool('hasRun') ?? false;
+
+    if(!hasRun && mounted){
+      var provider = Provider.of<ProviderService>(context, listen: false);
+      await prefs.setBool('hasRun', true);
+    }
+  }
+
+  // Displaying a page based on which one was selected
   Widget _selectedPage(index){
     switch (index) {
       case 0:
@@ -88,20 +112,29 @@ class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Center(
-          child: ShaderMask(
-            shaderCallback: (Rect bounds) {
-              return LinearGradient(
-                // TODO load in from database colours for title
-
-                colors: <Color>[Colors.yellow, Colors.orange, Colors.purple, Colors.blue],
-              ).createShader(bounds);
-            },
-            child: StyledText(
-              'Gradient Text Generator', 
-              bold: true,
-              fontSize: 30,
-              styleColour: Colors.white,
-            ),
+          child: Consumer<ProviderService>(
+            builder: (context, provider, child){
+            return FutureBuilder(
+              future: provider.getColourList('Gradient Text Generator'),
+              builder: (context, snapshot) {
+                return ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    return LinearGradient(
+                      colors: snapshot.connectionState==ConnectionState.done?
+                        provider.colourList:
+                        <Color>[Colors.yellow, Colors.orange, Colors.purple, Colors.blue],
+                    ).createShader(bounds);
+                  },
+                  child: StyledText(
+                    'Gradient Text Generator',
+                    bold: true,
+                    fontSize: 30,
+                    styleColour: Colors.white,
+                  ),
+                );
+              }
+            );
+            }
           )
         ),
       ),

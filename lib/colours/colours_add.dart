@@ -40,7 +40,7 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
         decoration: BoxDecoration(
           color: theme.colorScheme.primary,
           borderRadius: BorderRadius.circular(20)
-          
+
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -50,25 +50,24 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
               'Add Character',
               styleColour: theme.colorScheme.secondary,
               bold: true,
-              fontSize: 25,  
+              fontSize: 25,
             ),
             IconButton(
               onPressed: (){
                 showDialog(
-                  context: context, 
+                  context: context,
                   builder: (BuildContext context){
-                    return Placeholder();
+                    return LetterInputDialog();
                   }
                   );
-                // TODO add character with pop-up
-              }, 
+              },
               icon: Icon(
                 Icons.add_circle,
                 color: theme.colorScheme.secondary,
                 size: 35,
               ),
             ),
-            /*Expanded(child: VerticalDivider()),
+            Expanded(child: VerticalDivider()),
             SizedBox(
               width: 50,
               child: TextField(
@@ -77,7 +76,7 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
                     search = value;
                   });
                   _controller.selection = TextSelection(
-                    baseOffset: 0, 
+                    baseOffset: 0,
                     extentOffset: _controller.value.text.length
                   );
                 },
@@ -85,15 +84,15 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
                 cursorColor: theme.colorScheme.secondary,
                 textAlign: TextAlign.end,
                 controller: _controller,
-                
-                
+
+
                 style: TextStyle(
                   fontFamily: 'AnonymousPro',
                   fontSize: 20,
                   color: theme.colorScheme.secondary
                 ),
-                
-                
+
+
                 decoration: InputDecoration(
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: theme.colorScheme.secondary)
@@ -108,13 +107,13 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
             IconButton(
               onPressed: (){
                 widget.searchFunction(search);
-              }, 
+              },
               icon: Icon(
                 Icons.search,
                 color: theme.colorScheme.secondary,
                 size: 35,
               ),
-            ),*/
+            ),
           ],
         ),
       ),
