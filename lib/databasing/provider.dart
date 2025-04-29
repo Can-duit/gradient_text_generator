@@ -17,6 +17,8 @@ class ProviderService extends ChangeNotifier{
       colourList = [];
       var chars = [];
       text.split('').forEach((ch) => chars.add(ch));
+      bool firstLetter = true;
+      Color firstColour = Color(0xFFFFFFFF);
 
       for (int i = 0; i < chars.length; i++) {
         print("First for");
@@ -25,6 +27,7 @@ class ProviderService extends ChangeNotifier{
         print(colourCode);
 
         Color between;
+        Color finalColour;
         Color primary = Color.from(
             alpha: 1.0,
             red: colourCode[0],
@@ -32,13 +35,23 @@ class ProviderService extends ChangeNotifier{
             blue: colourCode[2]
         );
 
-        if (i==0){
+        if (firstLetter){
           between = primary;
+          finalColour = primary;
+          firstColour = primary;
+          firstLetter = false;
         } else{
+          finalColour = Color.lerp(primary, firstColour, 0.4) ?? Color(0xFFFFFFFF);
           between = Color.lerp(colourList[(i*2)-1], primary, 0.5) ?? Color(0xFFFFFFFF);
+          if((chars[i] == ' ')|| (chars[i] == '\t')){
+            firstLetter = true;
+          }
         }
+
+        //TODO check for enters to add another text field thing sort of
+
         colourList.add(between);
-        colourList.add(primary);
+        colourList.add(finalColour);
         if(i==chars.length-1){
           colourList.add(primary);
         }
@@ -51,8 +64,8 @@ class ProviderService extends ChangeNotifier{
   }
 
   Future<void> getSearchedData(String search) async {
-    final dataList = await LetterDatabase.selectFromDatabase(
-        LetterDatabase.tableName, search);
+    final dataList = await CharacterDatabase.selectFromDatabase(
+        CharacterDatabase.tableName, search);
 
     letterItem = dataList;
     notifyListeners();
@@ -61,7 +74,7 @@ class ProviderService extends ChangeNotifier{
   Future insertData(String letter, double r, double g, double b) async {
     final newLetter = LetterModel(letter: letter, r: r, g: g, b: b);
 
-    LetterDatabase.insertData(LetterDatabase.tableName,{
+    CharacterDatabase.insertData(CharacterDatabase.tableName,{
       'letter': newLetter.letter,
       'r': newLetter.r,
       'g': newLetter.g,
@@ -75,7 +88,7 @@ class ProviderService extends ChangeNotifier{
   }
 
   Future<List<double>> getColour(String letter) async {
-    return LetterDatabase.getColourData(
-        LetterDatabase.tableName, letter);
+    return CharacterDatabase.getColourData(
+        CharacterDatabase.tableName, letter);
   }
 }

@@ -64,7 +64,13 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                 child: TextField(
                   maxLines: 5,
                   controller: _controller,
-                  onChanged: (String text){
+                  onChanged: (String value){
+                    String text = value;
+                    if(value.endsWith('\n')){
+                      text = value.trim();
+                      _controller.text = text.trim();
+                    }
+
                     setState(() {
                       inputText = text;
                     });

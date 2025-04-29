@@ -3,15 +3,15 @@ import 'package:sqflite/sqflite.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 
-class LetterDatabase {
-  static const tableName = 'letter_database';
+class CharacterDatabase {
+  static const tableName = 'character_database';
 
   static Future<Database> letterDatabase()  async {
     final databaseDirPath = await getDatabasesPath();
     WidgetsFlutterBinding.ensureInitialized();
 
     return await openDatabase(
-      join(databaseDirPath, "letter_database.db"),
+      join(databaseDirPath, "character_db.db"),
       onCreate: (Database db, int version) async {
         await db.execute('''
         CREATE TABLE $tableName (
@@ -28,7 +28,7 @@ class LetterDatabase {
 
   static Future<List<LetterModel>> selectFromDatabase(
       String table, String search) async {
-    final db = await LetterDatabase.letterDatabase();
+    final db = await CharacterDatabase.letterDatabase();
     List<Map<String, dynamic>> maps;
 
     if (search == ''){
@@ -52,7 +52,7 @@ class LetterDatabase {
   }
 
   static Future insertData(String table, Map<String, Object> data) async {
-    final db = await LetterDatabase.letterDatabase();
+    final db = await CharacterDatabase.letterDatabase();
     print(table);
     print(data);
     return db.insert(
@@ -64,7 +64,9 @@ class LetterDatabase {
 
   static Future<List<double>> getColourData(
       String table, String letter) async {
-    final db = await LetterDatabase.letterDatabase();
+    final db = await CharacterDatabase.letterDatabase();
+
+    print("got database");
 
     final result = await db
         .rawQuery('SELECT * FROM $table WHERE letter=?', [letter]);
@@ -74,7 +76,20 @@ class LetterDatabase {
 
 
     if (result.isEmpty){
-      return [Random().nextDouble(), Random().nextDouble(), Random().nextDouble()];
+      double r = Random().nextDouble();
+      double g = Random().nextDouble();
+      double b = Random().nextDouble();
+
+      final newLetter = LetterModel(letter: letter, r: r, g: g, b: b);
+
+      insertData(CharacterDatabase.tableName,{
+        'letter': newLetter.letter,
+        'r': newLetter.r,
+        'g': newLetter.g,
+        'b': newLetter.b,
+      });
+      
+      return [r, g, b];
     }
 
     LetterModel letterModel = result.map((e) => LetterModel.fromDbMap(e)).first;
