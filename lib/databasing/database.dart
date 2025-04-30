@@ -53,8 +53,6 @@ class CharacterDatabase {
 
   static Future insertData(String table, Map<String, Object> data) async {
     final db = await CharacterDatabase.letterDatabase();
-    print(table);
-    print(data);
     return db.insert(
       table,
       data,
@@ -65,15 +63,8 @@ class CharacterDatabase {
   static Future<List<double>> getColourData(
       String table, String letter) async {
     final db = await CharacterDatabase.letterDatabase();
-
-    print("got database");
-
     final result = await db
         .rawQuery('SELECT * FROM $table WHERE letter=?', [letter]);
-
-    print("query - - - - - - - - - - - - - - - - - - - -:");
-    print(result);
-
 
     if (result.isEmpty){
       double r = Random().nextDouble();
@@ -96,8 +87,6 @@ class CharacterDatabase {
 
     List<double> data = letterModel.getRGB();
 
-    print(letter);
-    print(data);
     return data;
   }
 }

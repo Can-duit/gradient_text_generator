@@ -65,6 +65,8 @@ class Navigation extends StatefulWidget {
 class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
   
   late int _pageIndex; // Variable to determine selected page
+  List<Color> titleColourList = <Color>[Colors.yellow, Colors.orange, Colors.purple, Colors.blue];
+  final String title = 'Gradient Text Generator';
 
   @override
   void initState() {
@@ -79,10 +81,13 @@ class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
   Future<void> _initializeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool hasRun = prefs.getBool('hasRun') ?? false;
-
-    if(!hasRun && mounted){
-      var provider = Provider.of<ProviderService>(context, listen: false);
-      await prefs.setBool('hasRun', true);
+    
+    if(mounted){
+      final  provider = Provider.of<ProviderService>(context, listen: false);
+      if(!hasRun){
+        await prefs.setBool('hasRun', true);
+      }
+      titleColourList = await provider.getTitleColours(title);
     }
   }
 
@@ -110,19 +115,17 @@ class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.black87,
         title: Center(
           child: Consumer<ProviderService>(
             builder: (context, provider, child){
             return FutureBuilder(
-              future: provider.getColourList('Gradient Text Generator'),
+              future: provider.getTitleColours('Gradient Text Generator'),
               builder: (context, snapshot) {
                 return ShaderMask(
                   shaderCallback: (Rect bounds) {
                     return LinearGradient(
-                      colors: snapshot.connectionState==ConnectionState.done?
-                        provider.colourList:
-                        <Color>[Colors.yellow, Colors.orange, Colors.purple, Colors.blue],
+                      colors: titleColourList,
                     ).createShader(bounds);
                   },
                   child: StyledText(

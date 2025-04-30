@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gradient_text_generator/databasing/provider.dart';
 import 'package:gradient_text_generator/widgets.dart';
+import 'package:provider/provider.dart';
 
 class TextOutputWidget extends StatefulWidget {
   const TextOutputWidget({super.key});
@@ -53,20 +55,50 @@ class _TextOutputWidgetState extends State<TextOutputWidget> {
             ),
             Expanded(
               flex: 3,
-              child: Container(
-                margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.secondary,
-                  borderRadius: BorderRadius.circular(10)
-                ),
-                child: TextField(
-                  maxLines: 5,
-                  controller: _controller,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
+              child: SizedBox.expand(
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(10)
                   ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Consumer <ProviderService>(
+                        builder: (context, provider, child) {
+                          
+                          return FutureBuilder(
+                            future: provider.getColourList(provider.inputText),
+                            builder: (context, snapshot) {
+                              if(snapshot.connectionState == ConnectionState.done){
+                                if (provider.inputText.isNotEmpty){
+                                  return ShaderMask(
+                                    shaderCallback: (Rect bounds) {
+                                      return LinearGradient(
+                                        colors: provider.colourList
+                                      ).createShader(bounds);
+                                    },
+                                    child: StyledText(
+                                      provider.inputText,
+                                      bold: true,
+                                      fontSize: 20,
+                                      styleColour: Colors.white,
+                                    ),
+                                  );
+                                } else {
+                                  return Center();
+                                }
+                              } else {
+                                return CircularProgressIndicator();
+                              }
+                            }
+                          );
+                        }
+                      ),
+                    ],
+                  )
                 ),
               )
             )

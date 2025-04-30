@@ -7,24 +7,27 @@ class ProviderService extends ChangeNotifier{
 
   List<LetterModel> letterItem = [];
 
-  List<Color> colourList = [];
+  List<Color> _colourList = [];
+  List<Color> get colourList => _colourList;
+
 
   String _search = '';
   String get search => _search;
 
+  String _inputText = '';
+  String get inputText =>_inputText;
+
   Future<void> getColourList(String text) async {
     if(text.isNotEmpty) {
-      colourList = [];
+      _colourList = [];
       var chars = [];
       text.split('').forEach((ch) => chars.add(ch));
       bool firstLetter = true;
       Color firstColour = Color(0xFFFFFFFF);
 
       for (int i = 0; i < chars.length; i++) {
-        print("First for");
         List<double> colourCode = await getColour(chars[i]);
         //List<double> colourCode = [Random().nextDouble(),Random().nextDouble(),Random().nextDouble()];
-        print(colourCode);
 
         Color between;
         Color finalColour;
@@ -42,21 +45,66 @@ class ProviderService extends ChangeNotifier{
           firstLetter = false;
         } else{
           finalColour = Color.lerp(primary, firstColour, 0.4) ?? Color(0xFFFFFFFF);
-          between = Color.lerp(colourList[(i*2)-1], primary, 0.5) ?? Color(0xFFFFFFFF);
+          between = Color.lerp(_colourList[(i*2)-1], finalColour, 0.5) ?? Color(0xFFFFFFFF);
           if((chars[i] == ' ')|| (chars[i] == '\t')){
             firstLetter = true;
           }
         }
 
         //TODO check for enters to add another text field thing sort of
+        //TODO ALSO make it so spaces are "colourless"
 
-        colourList.add(between);
-        colourList.add(finalColour);
+        _colourList.add(between);
+        _colourList.add(finalColour);
         if(i==chars.length-1){
-          colourList.add(primary);
+          _colourList.add(primary);
         }
       }
     }
+  }
+
+  Future<List<Color>> getTitleColours(String text) async {
+    List<Color> titleColours = [];
+    var chars = [];
+    text.split('').forEach((ch) => chars.add(ch));
+    bool firstLetter = true;
+    Color firstColour = Color(0xFFFFFFFF);
+
+    for (int i = 0; i < chars.length; i++) {
+      List<double> colourCode = await getColour(chars[i]);
+      //List<double> colourCode = [Random().nextDouble(),Random().nextDouble(),Random().nextDouble()];
+
+      Color between;
+      Color finalColour;
+      Color primary = Color.from(
+          alpha: 1.0,
+          red: colourCode[0],
+          green: colourCode[1],
+          blue: colourCode[2]
+      );
+
+      if (firstLetter){
+        between = primary;
+        finalColour = primary;
+        firstColour = primary;
+        firstLetter = false;
+      } else{
+        finalColour = Color.lerp(primary, firstColour, 0.4) ?? Color(0xFFFFFFFF);
+        between = Color.lerp(titleColours[(i*2)-1], primary, 0.5) ?? Color(0xFFFFFFFF);
+        if((chars[i] == ' ')|| (chars[i] == '\t')){
+          firstLetter = true;
+        }
+      }
+
+      //TODO check for enters to add another text field thing sort of
+
+      titleColours.add(between);
+      titleColours.add(finalColour);
+      if(i==chars.length-1){
+        titleColours.add(primary);
+      }
+    }
+    return titleColours;
   }
 
   Future<void> setSearch(String searchText) async {
@@ -80,10 +128,6 @@ class ProviderService extends ChangeNotifier{
       'g': newLetter.g,
       'b': newLetter.b,
     });
-    print(letter);
-    print(r);
-    print(g);
-    print(b);
     notifyListeners();
   }
 
@@ -91,4 +135,9 @@ class ProviderService extends ChangeNotifier{
     return CharacterDatabase.getColourData(
         CharacterDatabase.tableName, letter);
   }
+
+  Future<void> sendInputText (String input) async {
+    _inputText = input;
+    notifyListeners();
+  } 
 }

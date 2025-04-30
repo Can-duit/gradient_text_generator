@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gradient_text_generator/databasing/provider.dart';
 import 'package:gradient_text_generator/widgets.dart';
+import 'package:provider/provider.dart';
 
 class TextInputWidget extends StatefulWidget {
   const TextInputWidget({super.key});
@@ -11,10 +13,13 @@ class TextInputWidget extends StatefulWidget {
 class _TextInputWidgetState extends State<TextInputWidget> {
 
   late TextEditingController _controller;
+  late String inputText;
 
   @override
   void initState() {
+    inputText = '';
     _controller = TextEditingController();
+    _loadPrevText();
     super.initState();
   }
 
@@ -24,9 +29,33 @@ class _TextInputWidgetState extends State<TextInputWidget> {
     super.dispose();
   }
 
+  void _loadPrevText() {
+    inputText = Provider.of<ProviderService>(context, listen: false).inputText;
+    _controller = TextEditingController(text: inputText);
+  }
+
+  void _onTextChanged (String value){
+    String text = value;
+    if(value.endsWith('\n')){
+      text = value.trim();
+      _controller.text = text.trim();
+    }
+
+    setState(() {
+      inputText = value;
+      if(value.endsWith('\n')){
+        _onButtonPressed();
+      }
+    });
+  }
+
+  void _onButtonPressed (){
+    Provider.of<ProviderService>(context, listen: false).sendInputText(inputText);
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    String inputText = '';
     final ThemeData theme = Theme.of(context);
 
     return SizedBox.expand(
@@ -64,28 +93,19 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                 child: TextField(
                   maxLines: 5,
                   controller: _controller,
-                  onChanged: (String value){
-                    String text = value;
-                    if(value.endsWith('\n')){
-                      text = value.trim();
-                      _controller.text = text.trim();
-                    }
+                  
+                  onChanged: _onTextChanged,
 
-                    setState(() {
-                      inputText = text;
-                    });
-                  },
                   style: TextStyle(
                     fontFamily: 'AnonymousPro',
+                    fontSize: 20
                   ),
+
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
                       icon: Icon(Icons.check_circle),
                       iconSize: 40,
-                      onPressed: (){
-                        
-                        // TODO submit to the database
-                      },
+                      onPressed: _onButtonPressed,
                     ),
                     suffixIconColor: theme.primaryColor,
                     hintText: 'Type Here',
