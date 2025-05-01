@@ -107,8 +107,9 @@ class ProviderService extends ChangeNotifier{
     return titleColours;
   }
 
-  Future<void> setSearch(String searchText) async {
+  Future<void> setSearch(String searchText, bool notify) async {
     _search = searchText;
+    notify? notifyListeners(): null;
   }
 
   Future<void> getSearchedData(String search) async {
@@ -116,7 +117,6 @@ class ProviderService extends ChangeNotifier{
         CharacterDatabase.tableName, search);
 
     letterItem = dataList;
-    notifyListeners();
   }
 
   Future insertData(String letter, double r, double g, double b) async {

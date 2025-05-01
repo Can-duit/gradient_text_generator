@@ -4,14 +4,14 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 
 class CharacterDatabase {
-  static const tableName = 'character_database';
+  static const tableName = 'characters_database';
 
   static Future<Database> letterDatabase()  async {
     final databaseDirPath = await getDatabasesPath();
     WidgetsFlutterBinding.ensureInitialized();
 
     return await openDatabase(
-      join(databaseDirPath, "character_db.db"),
+      join(databaseDirPath, "characters_db.db"),
       onCreate: (Database db, int version) async {
         await db.execute('''
         CREATE TABLE $tableName (
@@ -29,26 +29,18 @@ class CharacterDatabase {
   static Future<List<LetterModel>> selectFromDatabase(
       String table, String search) async {
     final db = await CharacterDatabase.letterDatabase();
-    List<Map<String, dynamic>> maps;
-
-    if (search == ''){
-      maps = await db.rawQuery('''SELECT * FROM $tableName
-      ORDER BY letter
-      ''');
-      if (maps.isNotEmpty){
-        return maps.map((map) => LetterModel.fromDbMap(map)).toList();
-      }
-      return [];
-    }
     
-    maps = await db.rawQuery('''SELECT * FROM $tableName
-    WHERE letter = ?
-    ORDER BY letter''', ['%$search']);
+    List<LetterModel> letterModels = [];
 
-    if (maps.isNotEmpty){
-      return maps.map((map) => LetterModel.fromDbMap(map)).toList();
+    final result = await db.rawQuery('''SELECT * FROM $tableName
+    WHERE NOT letter = ? AND 
+    letter LIKE ?
+    ORDER BY letter''', [' ','%$search']);
+
+    if (result.isNotEmpty){
+      letterModels = result.map((e) => LetterModel.fromDbMap(e)).toList();
     }
-    return [];
+    return letterModels;
   }
 
   static Future insertData(String table, Map<String, Object> data) async {
@@ -103,10 +95,10 @@ class LetterModel {
     required this.b
   });
   LetterModel.fromDbMap(Map<String, dynamic> map)
-      : letter = map['letter'],
-        r = map['r'],
-        g = map['g'],
-        b = map['b'];
+      : letter = map['letter'] as String,
+        r = map['r'] as double,
+        g = map['g'] as double,
+        b = map['b'] as double;
 
   Map<String, dynamic> toDbMap() {
     var map = Map<String, dynamic>();

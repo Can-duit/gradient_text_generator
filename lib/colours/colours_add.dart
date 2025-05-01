@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gradient_text_generator/databasing/provider.dart';
 import 'package:gradient_text_generator/widgets.dart';
+import 'package:provider/provider.dart';
 
 class AddColoursWidget extends StatefulWidget {
-  final Function(String) searchFunction;
 
-  const AddColoursWidget({
-    required this.searchFunction,
-    super.key
-    });
+  const AddColoursWidget({super.key});
 
   @override
   State<AddColoursWidget> createState() => _AddColoursWidgetState();
@@ -20,6 +18,7 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
   @override
   void initState() {
     _controller = TextEditingController();
+    _searchData(false);
     super.initState();
   }
 
@@ -27,6 +26,10 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _searchData (bool notify){
+    Provider.of<ProviderService>(context, listen: false).setSearch(search, notify);
   }
 
   @override
@@ -106,7 +109,7 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
             ),
             IconButton(
               onPressed: (){
-                widget.searchFunction(search);
+                _searchData(true);
               },
               icon: Icon(
                 Icons.search,

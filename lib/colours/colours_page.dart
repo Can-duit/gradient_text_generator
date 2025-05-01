@@ -12,9 +12,7 @@ class ColoursPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        AddColoursWidget(
-          searchFunction: (value){},
-        ),
+        AddColoursWidget(),
         Expanded(
           child: ColoursGridview(),
         ),

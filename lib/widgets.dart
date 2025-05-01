@@ -77,7 +77,9 @@ class StyledText extends StatelessWidget {
 }
 
 class LetterInputDialog extends StatefulWidget {
-  const LetterInputDialog({super.key});
+  final String? inputLetter;
+
+  const LetterInputDialog({super.key, this.inputLetter});
 
   @override
   State<LetterInputDialog> createState() => _LetterInputDialogState();
@@ -85,15 +87,23 @@ class LetterInputDialog extends StatefulWidget {
 
 class _LetterInputDialogState extends State<LetterInputDialog> {
   late Color pickerColour;
-  String character = '';
+  late String character;
   late TextEditingController _colourController;
   late TextEditingController _characterController;
 
   @override
   void initState() {
+
+    character = widget.inputLetter?? '';
+
     pickerColour = Color(0x00000000);
+
+    if(character != '') {
+       _loadColour();
+    } 
+
     _colourController = TextEditingController();
-    _characterController = TextEditingController();
+    _characterController = TextEditingController(text: character);
 
     super.initState();
   }
@@ -102,6 +112,11 @@ class _LetterInputDialogState extends State<LetterInputDialog> {
     _colourController.dispose;
     _characterController.dispose;
     super.dispose();
+  }
+
+  void _loadColour() async {
+    List<double> colours = await Provider.of<ProviderService>(context, listen: false).getColour(character);
+    pickerColour = Color.from(alpha: 1.0, red: colours[0], green: colours[1], blue: colours[2]);
   }
 
   @override
