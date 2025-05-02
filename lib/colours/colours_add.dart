@@ -76,7 +76,9 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
               child: TextField(
                 onChanged: (value){
                   setState(() {
-                    search = value;
+                    if(value != ' '&& value != '\n' && value != '\t'){
+                      search = value;
+                    }
                   });
                   _controller.selection = TextSelection(
                     baseOffset: 0,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gradient_text_generator/home/colour_slider.dart';
 import 'package:gradient_text_generator/home/text_display.dart';
 import 'package:gradient_text_generator/home/text_input.dart';
 
@@ -13,6 +14,7 @@ class HomePage extends StatelessWidget {
         Expanded(
           child: TextInputWidget()
         ),
+        // ColourSlider(),
         Expanded(
           child: TextOutputWidget()
         ),

@@ -42,7 +42,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
     }
 
     setState(() {
-      inputText = value;
+      inputText = text;
       if(value.endsWith('\n')){
         _onButtonPressed();
       }

@@ -121,101 +121,101 @@ class _LetterInputDialogState extends State<LetterInputDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: AlertDialog(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            StyledText('character:', bold: true,),
-            SizedBox(
-              width: 50,
-              child: TextField(
-                onChanged: (value){
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AlertDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              StyledText('character:', bold: true,),
+              SizedBox(
+                width: 50,
+                child: TextField(
+                  onChanged: (value){
+                    setState(() {
+                      character = value;
+                    });
+                    _characterController.selection = TextSelection(
+                        baseOffset: 0,
+                        extentOffset: _characterController.value.text.length
+                    );
+                  },
+                  onTap: (){
+                    _characterController.selection = TextSelection(
+                        baseOffset: 0,
+                        extentOffset: _characterController.value.text.length
+                    );
+                  },
+                  maxLength: 1,
+                  textAlign: TextAlign.center,
+                  controller: _characterController,
+        
+                  style: TextStyle(
+                      fontFamily: 'AnonymousPro',
+                      fontSize: 30,
+                  ),
+        
+                  decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(),
+                      enabledBorder: UnderlineInputBorder(),
+                      counterText: ''
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            children: [
+              ColorPicker(
+                pickerColor: pickerColour,
+                onColorChanged: (Color colour){
                   setState(() {
-                    character = value;
+                    pickerColour = colour;
                   });
-                  _characterController.selection = TextSelection(
-                      baseOffset: 0,
-                      extentOffset: _characterController.value.text.length
-                  );
                 },
-                onTap: (){
-                  _characterController.selection = TextSelection(
-                      baseOffset: 0,
-                      extentOffset: _characterController.value.text.length
-                  );
-                },
-                maxLength: 1,
-                textAlign: TextAlign.center,
-                controller: _characterController,
-
-                style: TextStyle(
-                    fontFamily: 'AnonymousPro',
-                    fontSize: 30,
+                pickerAreaHeightPercent: 0.7,
+                enableAlpha: false,
+                displayThumbColor: true,
+                paletteType: PaletteType.hsvWithHue,
+                labelTypes: const [],
+                pickerAreaBorderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(2),
+                  topRight: Radius.circular(2),
                 ),
-
-                decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(),
-                    enabledBorder: UnderlineInputBorder(),
-                    counterText: ''
+                hexInputController: _colourController,
+                portraitOnly: true,
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+                child: CupertinoTextField(
+                  controller: _colourController,
+                  prefix: const Padding(
+                    padding: EdgeInsets.only(left: 8),
+                    child: Icon(Icons.tag),
+                  ),
+                  autofocus: true,
+                  maxLength: 9,
+                  inputFormatters: [
+                    UpperCaseTextFormatter(),
+                    FilteringTextInputFormatter.allow(RegExp(kValidHexPattern)),
+                  ],
                 ),
               ),
-            ),
-          ],
-        ),
-        content: Column(
-          children: [
-            ColorPicker(
-              pickerColor: pickerColour,
-              onColorChanged: (Color colour){
-                setState(() {
-                  pickerColour = colour;
-                });
-                print(colour.r);
-                print(colour.g);
-                print(colour.b);
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: character == ''? null: (){
+                Provider.of<ProviderService>(context, listen: false).insertData(
+                    character, pickerColour.r, pickerColour.g,pickerColour.b);
+                Navigator.of(context).pop();
               },
-              pickerAreaHeightPercent: 0.7,
-              enableAlpha: false,
-              displayThumbColor: true,
-              paletteType: PaletteType.hsvWithHue,
-              labelTypes: const [],
-              pickerAreaBorderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(2),
-                topRight: Radius.circular(2),
-              ),
-              hexInputController: _colourController,
-              portraitOnly: true,
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
-              child: CupertinoTextField(
-                controller: _colourController,
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 8),
-                  child: Icon(Icons.tag),
-                ),
-                autofocus: true,
-                maxLength: 9,
-                inputFormatters: [
-                  UpperCaseTextFormatter(),
-                  FilteringTextInputFormatter.allow(RegExp(kValidHexPattern)),
-                ],
-              ),
-            ),
+              child: StyledText('confirm')
+            )
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: character == ''? null: (){
-              Provider.of<ProviderService>(context, listen: false).insertData(
-                  character, pickerColour.r, pickerColour.g,pickerColour.b);
-              Navigator.of(context).pop();
-            },
-            child: StyledText('confirm')
-          )
-        ],
-      ),
+      ],
     );
   }
 }

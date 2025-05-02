@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_text_generator/databasing/database.dart';
@@ -110,13 +109,21 @@ class ProviderService extends ChangeNotifier{
   Future<void> setSearch(String searchText, bool notify) async {
     _search = searchText;
     notify? notifyListeners(): null;
+    if(searchText == ''){
+      print('searched for all');
+    }
   }
 
   Future<void> getSearchedData(String search) async {
     final dataList = await CharacterDatabase.selectFromDatabase(
         CharacterDatabase.tableName, search);
-
-    letterItem = dataList;
+    print('got ${dataList.length} items');
+    if (dataList.isNotEmpty){
+      print("converting to model");
+      List<LetterModel> letterModels = dataList.map((e) => LetterModel.fromDbMap(e)).toList(); 
+      letterItem = letterModels;
+    }
+    print("got datalist");
   }
 
   Future insertData(String letter, double r, double g, double b) async {

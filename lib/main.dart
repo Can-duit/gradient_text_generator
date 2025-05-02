@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_text_generator/colours/colours_page.dart';
-import 'package:gradient_text_generator/databasing/database.dart';
 import 'package:gradient_text_generator/databasing/provider.dart';
 import 'package:gradient_text_generator/home/home_page.dart';
 import 'package:gradient_text_generator/widgets.dart';
@@ -80,12 +79,12 @@ class _NavigationState extends State<Navigation> with TickerProviderStateMixin{
 
   Future<void> _initializeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool hasRun = prefs.getBool('hasRun') ?? false;
+    bool alreadyRan = prefs.getBool('alreadyRan') ?? false;
     
     if(mounted){
       final  provider = Provider.of<ProviderService>(context, listen: false);
-      if(!hasRun){
-        await prefs.setBool('hasRun', true);
+      if(!alreadyRan){
+        await prefs.setBool('alreadyRan', true);
       }
       titleColourList = await provider.getTitleColours(title);
     }

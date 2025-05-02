@@ -4,14 +4,14 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 
 class CharacterDatabase {
-  static const tableName = 'characters_database';
+  static const tableName = 'character_colour_database';
 
   static Future<Database> letterDatabase()  async {
     final databaseDirPath = await getDatabasesPath();
     WidgetsFlutterBinding.ensureInitialized();
 
     return await openDatabase(
-      join(databaseDirPath, "characters_db.db"),
+      join(databaseDirPath, "character_colour_db.db"),
       onCreate: (Database db, int version) async {
         await db.execute('''
         CREATE TABLE $tableName (
@@ -26,21 +26,16 @@ class CharacterDatabase {
     );
   }
 
-  static Future<List<LetterModel>> selectFromDatabase(
+  static Future<List<Map<String, dynamic>>> selectFromDatabase(
       String table, String search) async {
     final db = await CharacterDatabase.letterDatabase();
-    
-    List<LetterModel> letterModels = [];
 
     final result = await db.rawQuery('''SELECT * FROM $tableName
     WHERE NOT letter = ? AND 
     letter LIKE ?
-    ORDER BY letter''', [' ','%$search']);
+    ORDER BY letter''', [' ','%$search%']);
 
-    if (result.isNotEmpty){
-      letterModels = result.map((e) => LetterModel.fromDbMap(e)).toList();
-    }
-    return letterModels;
+    return result;
   }
 
   static Future insertData(String table, Map<String, Object> data) async {

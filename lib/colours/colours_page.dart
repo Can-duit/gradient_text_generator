@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:gradient_text_generator/colours/colours_add.dart';
 import 'package:gradient_text_generator/colours/colours_gridview.dart';
