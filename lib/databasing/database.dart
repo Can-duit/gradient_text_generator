@@ -4,14 +4,14 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 
 class CharacterDatabase {
-  static const tableName = 'character_colour_database';
+  static const tableName = 'synesthesic_text_database';
 
   static Future<Database> letterDatabase()  async {
     final databaseDirPath = await getDatabasesPath();
     WidgetsFlutterBinding.ensureInitialized();
 
     return await openDatabase(
-      join(databaseDirPath, "character_colour_db.db"),
+      join(databaseDirPath, "synesthesic_text_db.db"),
       onCreate: (Database db, int version) async {
         await db.execute('''
         CREATE TABLE $tableName (

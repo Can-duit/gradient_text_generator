@@ -6,9 +6,11 @@ class ProviderService extends ChangeNotifier{
 
   List<LetterModel> letterItem = [];
 
-  List<Color> _colourList = [];
-  List<Color> get colourList => _colourList;
+  List<List<Color>> _colourList = [];
+  List<List<Color>> get colourList => _colourList;
 
+  List<String> _lines = [];
+  List<String> get lines => _lines;
 
   String _search = '';
   String get search => _search;
@@ -16,48 +18,54 @@ class ProviderService extends ChangeNotifier{
   String _inputText = '';
   String get inputText =>_inputText;
 
-  Future<void> getColourList(String text) async {
+  Future<void> getColourList(List<String> text) async {
     if(text.isNotEmpty) {
       _colourList = [];
-      var chars = [];
-      text.split('').forEach((ch) => chars.add(ch));
-      bool firstLetter = true;
-      Color firstColour = Color(0xFFFFFFFF);
+      
+      for (int i = 0; i < text.length; i++){
 
-      for (int i = 0; i < chars.length; i++) {
-        List<double> colourCode = await getColour(chars[i]);
-        //List<double> colourCode = [Random().nextDouble(),Random().nextDouble(),Random().nextDouble()];
+        var chars = [];
+        text[i].split('').forEach((ch) => chars.add(ch));
+        bool firstLetter = true;
+        Color firstColour = Color(0xFFFFFFFF);
+        List<Color> localColourList = [];
 
-        Color between;
-        Color finalColour;
-        Color primary = Color.from(
-            alpha: 1.0,
-            red: colourCode[0],
-            green: colourCode[1],
-            blue: colourCode[2]
-        );
+        for (int i = 0; i < chars.length; i++) {
+          List<double> colourCode = await getColour(chars[i]);
+          //List<double> colourCode = [Random().nextDouble(),Random().nextDouble(),Random().nextDouble()];
 
-        if (firstLetter){
-          between = primary;
-          finalColour = primary;
-          firstColour = primary;
-          firstLetter = false;
-        } else{
-          finalColour = Color.lerp(primary, firstColour, 0.4) ?? Color(0xFFFFFFFF);
-          between = Color.lerp(_colourList[(i*2)-1], finalColour, 0.5) ?? Color(0xFFFFFFFF);
-          if((chars[i] == ' ')|| (chars[i] == '\t')){
-            firstLetter = true;
+          Color between;
+          Color finalColour;
+          Color primary = Color.from(
+              alpha: 1.0,
+              red: colourCode[0],
+              green: colourCode[1],
+              blue: colourCode[2]
+          );
+
+          if (firstLetter){
+            between = primary;
+            finalColour = primary;
+            firstColour = primary;
+            firstLetter = false;
+          } else{
+            finalColour = Color.lerp(primary, firstColour, 0.4) ?? Color(0xFFFFFFFF);
+            between = Color.lerp(localColourList[(i*2)-1], finalColour, 0.5) ?? Color(0xFFFFFFFF);
+            if((chars[i] == ' ')|| (chars[i] == '\t')){
+              firstLetter = true;
+            }
+          }
+
+          //TODO check for enters to add another text field thing sort of
+          //TODO ALSO make it so spaces are "colourless"
+
+          localColourList.add(between);
+          localColourList.add(finalColour);
+          if(i==chars.length-1){
+            localColourList.add(primary);
           }
         }
-
-        //TODO check for enters to add another text field thing sort of
-        //TODO ALSO make it so spaces are "colourless"
-
-        _colourList.add(between);
-        _colourList.add(finalColour);
-        if(i==chars.length-1){
-          _colourList.add(primary);
-        }
+        _colourList.add(localColourList);
       }
     }
   }
@@ -143,8 +151,10 @@ class ProviderService extends ChangeNotifier{
         CharacterDatabase.tableName, letter);
   }
 
-  Future<void> sendInputText (String input) async {
+  Future<void> sendInputText (String input, List<String> textLines) async {
     _inputText = input;
+    _lines = textLines;
+    
     notifyListeners();
   } 
 }

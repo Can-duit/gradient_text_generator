@@ -63,41 +63,50 @@ class _TextOutputWidgetState extends State<TextOutputWidget> {
                     color: theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(10)
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Consumer <ProviderService>(
-                        builder: (context, provider, child) {
-                          
-                          return FutureBuilder(
-                            future: provider.getColourList(provider.inputText),
-                            builder: (context, snapshot) {
-                              if(snapshot.connectionState == ConnectionState.done){
-                                if (provider.inputText.isNotEmpty){
-                                  return ShaderMask(
-                                    shaderCallback: (Rect bounds) {
-                                      return LinearGradient(
-                                        colors: provider.colourList
-                                      ).createShader(bounds);
-                                    },
-                                    child: StyledText(
-                                      provider.inputText,
-                                      bold: true,
-                                      fontSize: 20,
-                                      styleColour: Colors.white,
-                                    ),
+                  child: Consumer <ProviderService>(
+                    builder: (context, provider, child) {
+                      
+                      return FutureBuilder(
+                        future: provider.getColourList(provider.lines),
+                        builder: (context, snapshot) {
+                          if(snapshot.connectionState == ConnectionState.done){
+                            if (provider.lines.isNotEmpty){
+                              return ListView.builder(
+                                itemCount: provider.lines.length,
+                                itemBuilder: (context, index){
+                                  return Row(
+                                    children: [
+                                      ShaderMask(
+                                        shaderCallback: (Rect bounds) {
+                                          return LinearGradient(
+                                            colors: provider.colourList[index]
+                                          ).createShader(bounds);
+                                        },
+                                        child: Text(
+                                          provider.lines[index],
+                                          style: TextStyle(
+                                            fontFamily: 'AnonymousPro',
+                                            fontSize: 20,
+                                            letterSpacing: 0,
+                                            fontFeatures: [],
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          )
+                                        ),
+                                      ),
+                                    ],
                                   );
-                                } else {
-                                  return Center();
                                 }
-                              } else {
-                                return CircularProgressIndicator();
-                              }
+                              );
+                            } else {
+                              return Center();
                             }
-                          );
+                          } else {
+                            return CircularProgressIndicator();
+                          }
                         }
-                      ),
-                    ],
+                      );
+                    }
                   )
                 ),
               )

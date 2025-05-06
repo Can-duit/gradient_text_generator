@@ -34,24 +34,26 @@ class _TextInputWidgetState extends State<TextInputWidget> {
     _controller = TextEditingController(text: inputText);
   }
 
-  void _onTextChanged (String value){
-    String text = value;
-    if(value.endsWith('\n')){
-      text = value.trim();
-      _controller.text = text.trim();
+  List<String> breakTextIntoLines(String text, double maxWidth, TextStyle style) {
+    final span = TextSpan(text: text, style: style);
+    final textPainter = TextPainter(
+      text: span,
+      textDirection: TextDirection.ltr,
+      maxLines: null,
+    );
+
+    textPainter.layout(maxWidth: maxWidth);
+    final lines = <String>[];
+
+    for (final line in textPainter.computeLineMetrics()) {
+      final startIndex = textPainter.getPositionForOffset(Offset(0, line.baseline)).offset;
+      final endIndex = textPainter.getPositionForOffset(Offset(maxWidth, line.baseline)).offset;
+
+      final lineText = text.substring(startIndex, endIndex).trim();
+      if (lineText.isNotEmpty) lines.add(lineText);
     }
 
-    setState(() {
-      inputText = text;
-      if(value.endsWith('\n')){
-        _onButtonPressed();
-      }
-    });
-  }
-
-  void _onButtonPressed (){
-    Provider.of<ProviderService>(context, listen: false).sendInputText(inputText);
-
+    return lines;
   }
 
   @override
@@ -83,33 +85,57 @@ class _TextInputWidgetState extends State<TextInputWidget> {
             ),
             Expanded(
               flex: 3,
-              child: Container(
-                margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.secondary,
-                  borderRadius: BorderRadius.circular(10)
-                ),
-                child: TextField(
-                  maxLines: 5,
-                  controller: _controller,
-                  
-                  onChanged: _onTextChanged,
-
-                  style: TextStyle(
-                    fontFamily: 'AnonymousPro',
-                    fontSize: 20
+              child: SizedBox.expand(
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(10)
                   ),
-
-                  decoration: InputDecoration(
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.check_circle),
-                      iconSize: 40,
-                      onPressed: _onButtonPressed,
-                    ),
-                    suffixIconColor: theme.primaryColor,
-                    hintText: 'Type Here',
-                    border: InputBorder.none,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final width = constraints.maxWidth;
+                      final textStyle = TextStyle(
+                        fontFamily: 'AnonymousPro',
+                        fontSize: 20,
+                        letterSpacing: 0,
+                        fontFeatures: [],
+                        fontWeight: FontWeight.bold,
+                      );
+                      return TextField(
+                        maxLines: 5,
+                        controller: _controller,
+                        
+                        onChanged: (String value){
+                          String text = value;
+                          if(value.endsWith('\n')){
+                            text = value.trim();
+                            _controller.text = text.trim();
+                          }
+                
+                          setState(() {
+                            inputText = text;
+                            if(value.endsWith('\n')){
+                              Provider.of<ProviderService>(context, listen: false).sendInputText(text, breakTextIntoLines(text, width, textStyle));
+                            }
+                          });
+                        },
+                      
+                        style: textStyle,
+                      
+                        decoration: InputDecoration(
+                          /*suffixIcon: IconButton(
+                            icon: Icon(Icons.check_circle),
+                            iconSize: 40,
+                            onPressed: _onButtonPressed,
+                          ),
+                          suffixIconColor: theme.primaryColor, // No longer using the button, enter to submit*/
+                          hintText: 'Type Here',
+                          border: InputBorder.none,
+                        ),
+                      );
+                    }
                   ),
                 ),
               )

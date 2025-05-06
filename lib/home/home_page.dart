@@ -14,7 +14,7 @@ class HomePage extends StatelessWidget {
         Expanded(
           child: TextInputWidget()
         ),
-        // ColourSlider(),
+        ColourSlider(),
         Expanded(
           child: TextOutputWidget()
         ),
