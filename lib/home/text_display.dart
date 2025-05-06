@@ -65,45 +65,48 @@ class _TextOutputWidgetState extends State<TextOutputWidget> {
                   ),
                   child: Consumer <ProviderService>(
                     builder: (context, provider, child) {
-                      
-                      return FutureBuilder(
-                        future: provider.getColourList(provider.lines),
-                        builder: (context, snapshot) {
-                          if(snapshot.connectionState == ConnectionState.done){
-                            if (provider.lines.isNotEmpty){
-                              return ListView.builder(
-                                itemCount: provider.lines.length,
-                                itemBuilder: (context, index){
-                                  return Row(
-                                    children: [
-                                      ShaderMask(
-                                        shaderCallback: (Rect bounds) {
-                                          return LinearGradient(
-                                            colors: provider.colourList[index]
-                                          ).createShader(bounds);
-                                        },
-                                        child: Text(
-                                          provider.lines[index],
-                                          style: TextStyle(
-                                            fontFamily: 'AnonymousPro',
-                                            fontSize: 20,
-                                            letterSpacing: 0,
-                                            fontFeatures: [],
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          )
-                                        ),
-                                      ),
-                                    ],
+                      return LayoutBuilder(
+                        builder: (context, constraints) {
+                          return FutureBuilder(
+                            future: provider.getColourList(provider.lines),
+                            builder: (context, snapshot) {
+                              if(snapshot.connectionState == ConnectionState.done){
+                                if (provider.lines.isNotEmpty){
+                                  return ListView.builder(
+                                    itemCount: provider.lines.length,
+                                    itemBuilder: (context, index){
+                                      return Row(
+                                        children: [
+                                          ShaderMask(
+                                            shaderCallback: (Rect bounds) {
+                                              return LinearGradient(
+                                                colors: provider.colourList[index]
+                                              ).createShader(bounds);
+                                            },
+                                            child: Text(
+                                              provider.lines[index],
+                                              style: TextStyle(
+                                                fontFamily: 'AnonymousPro',
+                                                fontSize: 20,
+                                                letterSpacing: 0,
+                                                fontFeatures: [],
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              )
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
                                   );
+                                } else {
+                                  return Center();
                                 }
-                              );
-                            } else {
-                              return Center();
+                              } else {
+                                return CircularProgressIndicator();
+                              }
                             }
-                          } else {
-                            return CircularProgressIndicator();
-                          }
+                          );
                         }
                       );
                     }

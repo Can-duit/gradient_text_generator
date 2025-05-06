@@ -71,6 +71,12 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
               ),
             ),
             Expanded(child: VerticalDivider()),
+            StyledText(
+              'Search Character',
+              styleColour: theme.colorScheme.secondary,
+              bold: true,
+              fontSize: 25,
+            ),
             SizedBox(
               width: 50,
               child: TextField(

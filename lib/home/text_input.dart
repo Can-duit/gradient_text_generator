@@ -103,6 +103,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                         fontFeatures: [],
                         fontWeight: FontWeight.bold,
                       );
+                      Provider.of<ProviderService>(context, listen: false).sendInputText(inputText, breakTextIntoLines(inputText, width, textStyle), notify: false);
                       return TextField(
                         maxLines: 5,
                         controller: _controller,
@@ -117,7 +118,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                           setState(() {
                             inputText = text;
                             if(value.endsWith('\n')){
-                              Provider.of<ProviderService>(context, listen: false).sendInputText(text, breakTextIntoLines(text, width, textStyle));
+                              Provider.of<ProviderService>(context, listen: false).sendInputText(inputText, breakTextIntoLines(text, width, textStyle), notify: true);
                             }
                           });
                         },

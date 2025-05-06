@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_text_generator/databasing/database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProviderService extends ChangeNotifier{
 
@@ -21,6 +22,8 @@ class ProviderService extends ChangeNotifier{
   Future<void> getColourList(List<String> text) async {
     if(text.isNotEmpty) {
       _colourList = [];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      double bias = prefs.getDouble('colour_bias') ?? 0.4;
       
       for (int i = 0; i < text.length; i++){
 
@@ -49,7 +52,7 @@ class ProviderService extends ChangeNotifier{
             firstColour = primary;
             firstLetter = false;
           } else{
-            finalColour = Color.lerp(primary, firstColour, 0.4) ?? Color(0xFFFFFFFF);
+            finalColour = Color.lerp(primary, firstColour, bias) ?? Color(0xFFFFFFFF);
             between = Color.lerp(localColourList[(i*2)-1], finalColour, 0.5) ?? Color(0xFFFFFFFF);
             if((chars[i] == ' ')|| (chars[i] == '\t')){
               firstLetter = true;
@@ -117,21 +120,15 @@ class ProviderService extends ChangeNotifier{
   Future<void> setSearch(String searchText, bool notify) async {
     _search = searchText;
     notify? notifyListeners(): null;
-    if(searchText == ''){
-      print('searched for all');
-    }
   }
 
   Future<void> getSearchedData(String search) async {
     final dataList = await CharacterDatabase.selectFromDatabase(
         CharacterDatabase.tableName, search);
-    print('got ${dataList.length} items');
     if (dataList.isNotEmpty){
-      print("converting to model");
       List<LetterModel> letterModels = dataList.map((e) => LetterModel.fromDbMap(e)).toList(); 
       letterItem = letterModels;
     }
-    print("got datalist");
   }
 
   Future insertData(String letter, double r, double g, double b) async {
@@ -151,10 +148,12 @@ class ProviderService extends ChangeNotifier{
         CharacterDatabase.tableName, letter);
   }
 
-  Future<void> sendInputText (String input, List<String> textLines) async {
+  Future<void> sendInputText (String input, List<String> textLines, {bool? notify}) async {
     _inputText = input;
     _lines = textLines;
     
-    notifyListeners();
+    if(notify==true){
+      notifyListeners();
+    }
   } 
 }
