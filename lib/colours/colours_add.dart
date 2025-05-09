@@ -3,6 +3,7 @@ import 'package:gradient_text_generator/databasing/provider.dart';
 import 'package:gradient_text_generator/widgets.dart';
 import 'package:provider/provider.dart';
 
+// This is the Add Character and Search Character menubar widget, found at the top of the colours tab
 class AddColoursWidget extends StatefulWidget {
 
   const AddColoursWidget({super.key});
@@ -10,11 +11,13 @@ class AddColoursWidget extends StatefulWidget {
   @override
   State<AddColoursWidget> createState() => _AddColoursWidgetState();
 }
-
 class _AddColoursWidgetState extends State<AddColoursWidget> {
+  
+  // Variables for searching for characters
   late TextEditingController _controller;
   String search = '';
 
+  // Runs upon initialization. Creates the controller and searches the database for all characters and colours.
   @override
   void initState() {
     _controller = TextEditingController();
@@ -22,20 +25,24 @@ class _AddColoursWidgetState extends State<AddColoursWidget> {
     super.initState();
   }
 
+  // Runs when widget is no longer being displayed. Gets rid of the controller to avoid errors.
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
+  // Searches for data with an inputted search, and will notify gridview to update when searched and notify is true
   void _searchData (bool notify){
     Provider.of<ProviderService>(context, listen: false).setSearch(search, notify);
   }
 
+  // Creating the widget tree
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = Theme.of(context); // Getting theme data
     
+    // Sized box and container create the 
     return SizedBox(
       child: Container(
         margin: EdgeInsets.all(20),

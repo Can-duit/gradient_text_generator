@@ -133,6 +133,13 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                           ),
                           suffixIconColor: theme.primaryColor, // No longer using the button, enter to submit*/
                           hintText: 'Type Here',
+                          hintStyle: TextStyle(
+                            fontFamily: 'AnonymousPro',
+                            fontSize: 20,
+                            letterSpacing: 0,
+                            fontFeatures: [],
+                            fontWeight: FontWeight.normal
+                          ),
                           border: InputBorder.none,
                         ),
                       );
